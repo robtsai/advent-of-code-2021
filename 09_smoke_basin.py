@@ -55,24 +55,23 @@ def risk_level(arr):
 
 
 def build_basin(board):
-    """ if we are on an unvisited location, and it is not a 9, we can start a new basin """
+    """if we are on an unvisited location, and it is not a 9, we can start a new basin"""
     all_basins = []
-    visited = [ [False for j in range(len(board[0]))] for i in range(len(board))]
-
+    visited = [[False for j in range(len(board[0]))] for i in range(len(board))]
 
     def dfs(board, r, c, cur_basin, visited):
-        if r < 0 or r > len(board)-1 or c < 0 or c > len(board[0]) - 1:
-            return 
+        if r < 0 or r > len(board) - 1 or c < 0 or c > len(board[0]) - 1:
+            return
         if visited[r][c] or board[r][c] == 9:
-            return 
+            return
         if board[r][c] != 9:
             cur_basin.append(board[r][c])
             visited[r][c] = True
 
-        dfs(board, r-1, c, cur_basin, visited)
-        dfs(board, r+1, c, cur_basin, visited)
-        dfs(board, r, c-1, cur_basin, visited)
-        dfs(board, r, c+1, cur_basin, visited)
+        dfs(board, r - 1, c, cur_basin, visited)
+        dfs(board, r + 1, c, cur_basin, visited)
+        dfs(board, r, c - 1, cur_basin, visited)
+        dfs(board, r, c + 1, cur_basin, visited)
         return cur_basin
 
     for i in range(len(board)):
@@ -85,8 +84,6 @@ def build_basin(board):
 
 def sort_basins(basins):
     return sorted(basins, key=lambda x: len(x), reverse=True)
-
-
 
 
 if __name__ == "__main__":
@@ -112,4 +109,3 @@ if __name__ == "__main__":
         len_of_top3 = [len(x) for x in sorted_basins[:3]]
         answer = functools.reduce(operator.mul, len_of_top3, 1)
         print(f"the answer to part 2 is {answer}")
-        
