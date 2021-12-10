@@ -1,4 +1,6 @@
 import math
+import operator
+import functools
 
 
 def read_data(file):
@@ -52,16 +54,62 @@ def risk_level(arr):
     return sum(x + 1 for x in arr)
 
 
+def build_basin(board):
+    """ if we are on an unvisited location, and it is not a 9, we can start a new basin """
+    all_basins = []
+    visited = [ [False for j in range(len(board[0]))] for i in range(len(board))]
+
+
+    def dfs(board, r, c, cur_basin, visited):
+        if r < 0 or r > len(board)-1 or c < 0 or c > len(board[0]) - 1:
+            return 
+        if visited[r][c] or board[r][c] == 9:
+            return 
+        if board[r][c] != 9:
+            cur_basin.append(board[r][c])
+            visited[r][c] = True
+
+        dfs(board, r-1, c, cur_basin, visited)
+        dfs(board, r+1, c, cur_basin, visited)
+        dfs(board, r, c-1, cur_basin, visited)
+        dfs(board, r, c+1, cur_basin, visited)
+        return cur_basin
+
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            basin = dfs(board, i, j, [], visited)
+            all_basins.append(basin)
+
+    return [basin for basin in all_basins if basin]
+
+
+def sort_basins(basins):
+    return sorted(basins, key=lambda x: len(x), reverse=True)
+
+
+
+
 if __name__ == "__main__":
-    inputfile = "input_files/problem9.txt"
-    board = read_data(inputfile)
 
     choice = input("enter 1 or 2 for answer\n")
     if not choice in ("1", "2"):
         raise ValueError("pick 1 or 2")
 
     if choice == "1":
+        inputfile = "input_files/problem9.txt"
+        board = read_data(inputfile)
         board_with_borders = add_borders(board)
         lowest = find_lowest(board_with_borders)
         score = risk_level(lowest)
         print(f"the answer to part 1 is {score}")
+
+    else:
+        # can swap file below for input-files/problem9basin.txt for teest
+        inputfile = "input_files/problem9.txt"
+        board = read_data(inputfile)
+        basins = build_basin(board)
+        sorted_basins = sort_basins(basins)
+        len_of_top3 = [len(x) for x in sorted_basins[:3]]
+        answer = functools.reduce(operator.mul, len_of_top3, 1)
+        print(f"the answer to part 2 is {answer}")
+        
