@@ -1,0 +1,2 @@
+# let's ignore all our compiled cpp programs
+sonar_sweep
